@@ -128,9 +128,7 @@ class SM4Crypto(object):
         
         #轮函数，一共32轮
         for i in range(0,32):
-            temp = middle[i + 1] ^ middle[i + 2] ^ middle[i+3] ^ self.round_key[i]
-            temp = self.sbox_32(temp)
-            temp = self.linear_transform(temp,2)
+            temp = self.linear_transform(self.sbox_32(middle[i + 1] ^ middle[i + 2] ^ middle[i+3] ^ self.round_key[i]),2)
             middle[i+4] = middle[i] ^ temp
         
         result = ''
@@ -159,29 +157,21 @@ class SM4Crypto(object):
         
         #轮函数，一共32轮
         for i in range(0,32):
-            temp = middle[i + 1] ^ middle[i + 2] ^ middle[i+3] ^ self.round_key[31-i]
-            temp = self.sbox_32(temp)
-            temp = self.linear_transform(temp,2)
+            temp = self.linear_transform(self.sbox_32(middle[i + 1] ^ middle[i + 2] ^ middle[i+3] ^ self.round_key[31-i]),2)
             middle[i+4] = middle[i] ^ temp
         
         result = ''
         for i in range(35, 31, -1):
             result += '%08x' % middle[i]
         
-        return bytes.fromhex(result)            
-        
-        
-        
-    
-        
+        return bytes.fromhex(result)
+
+
 if __name__ == "__main__":
-    # a = 0x0123456789abcdeffedcba9876543210
-    # a = a.to_bytes(16, byteorder='big', signed=True)
     a = b'\x01\x23\x45\x67\x89\xab\xcd\xef\xfe\xdc\xba\x98\x76\x54\x32\x10'
     s = SM4Crypto(a)
-    a = s.encryption(a)
-    print(a)
-    print(s.decryption(a).hex())
+    b = s.encryption(a)
+    print(b.hex())
 
     
             
